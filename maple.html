@@ -7,6 +7,7 @@
 </head>
 <body>
     <h1>지금 코디, 한달전 코디</h1>
+    <script type="text/javascript" src="appkey.js"></script>
     <script>
         var characterName = "";
         var characterOcid = "";
@@ -14,7 +15,7 @@
         var imgsrc2 ="";
         function search() {
             characterName = document.getElementById('characterName').value;
-            const API_KEY = "test_3fe30c83a280d8c05b2c82e269976455fddc8a16358adbc7635f1cf050213bfe71b616fa15b5c23482af00e36d937ea1";
+            const API_KEY = maplekey;
             var urlString = "https://open.api.nexon.com/maplestory/v1/id?character_name=" + characterName;
 
             fetch(urlString, {
