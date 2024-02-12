@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>메이플 성별</title>
+</head>
+<body>
+    <h1>지금 코디, 한달전 코디</h1>
+    <script>
+        var characterName = "";
+
+        function search() {
+            characterName = document.getElementById('characterName').value;
+            const API_KEY = "test_3fe30c83a280d8c05b2c82e269976455fddc8a16358adbc7635f1cf050213bfe71b616fa15b5c23482af00e36d937ea1";
+            var urlString = "https://open.api.nexon.com/maplestory/v1/id?character_name=" + characterName;
+
+            fetch(urlString, {
+                headers: {
+                    "x-nxopen-api-key": API_KEY
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                let characterOcid = data['ocid'];
+                
+                // Fetch current data
+                var urlCurrent = "https://open.api.nexon.com/maplestory/v1/character/basic?ocid=" + characterOcid + "&date=" + getCurrentDate();
+
+                fetch(urlCurrent, {
+                    headers: {
+                        "x-nxopen-api-key": API_KEY
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("gender").innerHTML = "성별 : " + data['character_gender'] + "자";
+                    document.getElementById('characterImg').src = data['character_image'];
+                });
+
+                // Fetch data for one month ago
+                var urlOneMonthAgo = "https://open.api.nexon.com/maplestory/v1/character/basic?ocid=" + characterOcid + "&date=" + getOneMonthAgoDate();
+
+                fetch(urlOneMonthAgo, {
+                    headers: {
+                        "x-nxopen-api-key": API_KEY
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('characterImg2').src = data['character_image'];
+                });
+            })
+            .catch(error => {
+                console.error(error);
+            });
+        }
+
+        // Helper function to get the current date in the required format
+        function getCurrentDate() {
+            var currentDate = new Date();
+            return currentDate.toISOString().split('T')[0];
+        }
+
+        // Helper function to get the date for one month ago in the required format
+        function getOneMonthAgoDate() {
+            var currentDate = new Date();
+            currentDate.setMonth(currentDate.getMonth() - 1);
+            return currentDate.toISOString().split('T')[0];
+        }
+    </script>
+    
+    <input id="characterName" placeholder="캐릭터명 입력"></input>
+    <input type="button" value="확인" onclick="search();"></input>
+    
+    <p id="gender"></p>
+    <p>지금 코디</p>
+    <img id="characterImg"></img><br>
+
+    <p>한달전 코디</p>
+    <img id="characterImg2"></img>
+</body>
+</html>

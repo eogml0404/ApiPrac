@@ -3,15 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>날씨</title>
+    <title>전주 숙박 시설</title>
 </head>
 <body>
-    <h1>오늘의 강릉날씨</h1>
+    <h1>전주 숙박 시설</h1>
     <p id="temperature"></p>
+    <script type="text/javascript" src="appkey.js"></script>
     <script type="text/javascript">
-        fetch("https://goweather.herokuapp.com/weather/Gangneung")
+        fetch("https://api.odcloud.kr/api/15059745/v1/uddi:7867f6f6-0793-4227-a73d-901ae596cee8?page=1&perPage=1000&serviceKey=" + tourapikey)
             .then((response) => response.json())
-            .then((data) => console.log(data));
+            .then((data) => console.log(data['data'].filter(item => item['객실수'] === 30).map(item => item['시 설 명'])
+            
+            ));
 
     </script>
 </body>

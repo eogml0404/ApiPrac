@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=<device-width>, initial-scale=1.0">
+    <title>메이플 성별</title>
+</head>
+<body>
+    <h1>지금 코디, 한달전 코디</h1>
+    <script>
+        var characterName = "";
+        var characterOcid = "";
+        var imgsrc1 ="";
+        var imgsrc2 ="";
+        function search() {
+            characterName = document.getElementById('characterName').value;
+            const API_KEY = "test_3fe30c83a280d8c05b2c82e269976455fddc8a16358adbc7635f1cf050213bfe71b616fa15b5c23482af00e36d937ea1";
+            var urlString = "https://open.api.nexon.com/maplestory/v1/id?character_name=" + characterName;
+
+            fetch(urlString, {
+                headers: {
+                    "x-nxopen-api-key": API_KEY
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                characterOcid = data['ocid'];
+                
+                // 두 번째 fetch 요청
+                var urlCash = "https://open.api.nexon.com/maplestory/v1/character/basic?ocid="+characterOcid+"&date=2024-02-11";
+
+                return fetch(urlCash, {
+                    headers: {
+                        "x-nxopen-api-key": API_KEY
+                    }
+                });
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("gender").innerHTML = "성별 : " + data['character_gender'] + "자";
+                document.getElementById('characterImg').src = data['character_image'];
+                imgsrc1 = data['character_image'];
+                
+            })
+
+            //두번째 사진
+            setTimeout(() => {
+                
+            
+            fetch(urlString, {
+                headers: {
+                    "x-nxopen-api-key": API_KEY
+                }
+            })
+            .then(response => response.json())
+            .then(data2 => {
+                
+                // 두 번째 fetch 요청
+                var urlCash2 = "https://open.api.nexon.com/maplestory/v1/character/basic?ocid="+characterOcid+"&date=2024-01-11";
+
+                return fetch(urlCash2, {
+                    headers: {
+                        "x-nxopen-api-key": API_KEY
+                    }
+                });
+            })
+            .then(response => response.json())
+            .then(data2 => {
+                document.getElementById('characterImg2').src = data2['character_image'];
+                imgsrc2 = data2['character_image'];
+                document.getElementById('advice').innerHTML = "";
+                    if (imgsrc2 === imgsrc1) {
+                    
+                    document.getElementById('advice').innerHTML = '어휴 코디좀 바꿔라';
+                       
+                }
+            })
+            }, 50);
+           
+          
+        }
+    </script>
+    
+    <input id="characterName" placeholder="캐릭터명 입력"></input>
+    <input type="button" value="확인" onclick="search();"></input>
+    
+    <p id="gender"></p>
+    <p style="font-weight: bold; color: red; " id="advice"></p>
+    <p>지금 코디</p>
+    <img id="characterImg"></img><br>
+
+    <p>한달전 코디</p>
+    <img id="characterImg2"></img>
+</body>
+</html>
