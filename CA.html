@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>끼고 있는템을 알고 싶다!</title>
+</head>
+<body>
+    <h1>끼고 있는템을 알고 싶다!</h1>
+    <script type="text/javascript" src="appkey.js"></script>
+    <script>
+        var characterName = "";
+        var characterServer ="";
+        var characterOuid = "";
+        
+        var imgsrc1 ="";
+        var imgsrc2 ="";
+        function search() {
+            characterName = document.getElementById('characterName').value;
+            characterServer = document.getElementById('characterServer').value;
+            const API_KEY = CAkey;
+            var urlString = "https://open.api.nexon.com/ca/v1/id?user_name="+characterName+"&world_name=" + characterServer;
+
+            fetch(urlString, {
+                headers: {
+                    "x-nxopen-api-key": API_KEY
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data['ouid']);
+                characterOuid = data['ouid'];
+               
+                var urlEquip = "https://open.api.nexon.com/ca/v1/user/item-equipment?ouid="+characterOuid;
+
+                return fetch(urlEquip, {
+                    headers: {
+                        "x-nxopen-api-key": API_KEY
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    const equipElement = document.getElementById('equip');
+                    equipElement.innerHTML = "";  // #equip 엘리먼트를 비웁니다.
+
+                    data.item_equipment.forEach(item => {
+                        equipElement.innerHTML += `<div>${item.item_equipment_slot_name} : ${item.item_name}</div>`;
+                    });
+                });
+            })
+            
+           
+          
+        }
+    </script>
+    <select id="characterServer">
+        <option value="해피">해피</option>
+        <option value="드림">드림</option>
+    </select>
+    
+    <input id="characterName" placeholder="캐릭터명 입력"></input>
+    <input type="button" value="확인" onclick="search();"></input>
+
+    <p>끼고 있는 아이템</p>
+    <div id="equip"></div>
+
+</body>
+</html>

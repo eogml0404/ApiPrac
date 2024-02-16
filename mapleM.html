@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=<device-width>, initial-scale=1.0">
+    <title>메이플 M 장비템</title>
+</head>
+<body>
+    <h1>메이플 M 장비템</h1>
+    <script type="text/javascript" src="appkey.js"></script>
+    <script>
+        var characterName = "";
+        var characterOcid = "";
+        var imgsrc1 ="";
+        var imgsrc2 ="";
+        function search() {
+            characterName = document.getElementById('characterName').value;
+            worldname = document.getElementById('world').value;
+            const API_KEY = mapleMkey;
+            var urlString = " https://open.api.nexon.com/maplestorym/v1/id?character_name=" + characterName + '&world_name=' + worldname;
+
+            fetch(urlString, {
+                headers: {
+                    "x-nxopen-api-key": API_KEY
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                characterOcid = data['ocid'];
+                
+                // 두 번째 fetch 요청
+                var urlCash = "https://open.api.nexon.com/maplestorym/v1/character/item-equipment?ocid="+characterOcid;
+
+                return fetch(urlCash, {
+                    headers: {
+                        "x-nxopen-api-key": API_KEY
+                    }
+                });
+            })
+            .then(response => response.json())
+            .then(data => {
+                    const equipElement = document.getElementById('equip');
+                    equipElement.innerHTML = "";  // #equip 엘리먼트를 비웁니다.
+
+                    data.item_equipment.forEach(item => {
+                        equipElement.innerHTML += `<div>${item.item_equipment_slot_name} : ${item.item_name}</div>`;
+                    });
+                });
+        }
+    </script>
+    
+    <select id="world">
+        <option value="아케인">아케인</option>
+        <option value="크로아">크로아</option>
+        <option value="엘리시움">엘리시움</option>
+        <option value="루나">루나</option>
+        <option value="스카니아">스카니아</option>
+        <option value="유니온">유니온</option>
+        <option value="제니스">제니스</option>
+    </select>
+
+    <input id="characterName" placeholder="캐릭터명 입력"></input>
+    <input type="button" value="확인" onclick="search();"></input>
+    
+    <p id="equip"></p>
+
+</body>
+</html>
